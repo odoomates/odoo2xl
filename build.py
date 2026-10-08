@@ -18,8 +18,10 @@ FOLDERS = ("src", "icons")
 SKIP = (".svg",)  # source artwork, not used by the browser
 
 FIREFOX_ID = "odoo2xl@odoomates"
-# 128: first release with scripting world "MAIN" for registered content scripts.
-FIREFOX_MIN_VERSION = "128.0"
+# 140 (Android 142): first releases that read data_collection_permissions.
+# (Scripting world "MAIN" for registered content scripts needs only 128.)
+FIREFOX_MIN_VERSION = "140.0"
+FIREFOX_ANDROID_MIN_VERSION = "142.0"
 
 
 def chrome_manifest(manifest):
@@ -39,6 +41,7 @@ def firefox_manifest(manifest):
             # Firefox's built-in data consent: this add-on collects nothing.
             "data_collection_permissions": {"required": ["none"]},
         },
+        "gecko_android": {"strict_min_version": FIREFOX_ANDROID_MIN_VERSION},
     }
     return manifest
 

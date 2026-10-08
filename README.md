@@ -38,7 +38,7 @@ Nothing is sent anywhere except your own Odoo. Nothing is installed on the serve
 1. Open `chrome://extensions` and turn on **Developer mode**.
 2. Click **Load unpacked** and choose this folder.
 
-**Firefox (128 or newer)**
+**Firefox (140 or newer)**
 
 1. Run `python3 build.py firefox`.
 2. Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** and pick `dist/odoo2xl-<version>-firefox.zip`.
@@ -51,7 +51,7 @@ Then open your Odoo database, click the extension icon, and tick **Offer Excel w
 - `dist/odoo2xl-<version>-chrome.zip` for the Chrome Web Store;
 - `dist/odoo2xl-<version>-firefox.zip` for Firefox Add-ons.
 
-The Firefox package swaps the Chrome-only parts of `manifest.json`: background script instead of service worker, add-on ID `odoo2xl@odoomates`, minimum Firefox 128, and the declaration that no data is collected.
+The Firefox package swaps the Chrome-only parts of `manifest.json`: background script instead of service worker, add-on ID `odoo2xl@odoomates`, minimum Firefox 140 (142 on Android), and the declaration that no data is collected.
 
 Tick **Remember for this report** in the print dialog to skip the question next time. Change or clear remembered choices in the popup.
 
