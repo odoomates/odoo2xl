@@ -1,6 +1,6 @@
 # Privacy policy: Odoo2XL
 
-Last updated: 2026-10-08
+Last updated: 2026-10-08 (permissions wording corrected)
 
 Odoo2XL is a browser extension that converts Odoo's printable reports into Excel files.
 
@@ -14,6 +14,6 @@ Nothing else is stored.
 
 **What it sends.** Nothing. The extension does not send report contents, personal data, browsing activity or any other information to the developer or any third party. It has no analytics or tracking, and it does not contact any server other than your own Odoo.
 
-**Permissions.** Access to a website is requested only when you enable the extension on that Odoo site, and can be removed at any time from the extension popup or Chrome's extension settings.
+**Permissions.** Access to a website is requested only when you enable the extension on that Odoo site. You can turn the extension off for a site at any time from its popup, and remove its access to the site in your browser's add-on settings (Firefox: Add-ons and themes → Odoo2XL → Permissions; Chrome: Extensions → Odoo2XL → Details → Site access).
 
 **Contact.** Questions about this policy: odoomates@gmail.com
