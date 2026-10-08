@@ -63,6 +63,7 @@ Lets users download Odoo's printable reports as Excel spreadsheets, from Odoo's 
   3. store/3-real-spreadsheet.png
   4. store/4-per-site.png
 - Small promo tile (440x280): store/promo-tile-440x280.png
+- Marquee promo tile (1400x560, optional; used if Google features the extension): store/marquee-1400x560.png
 
 ## Privacy policy URL
 https://github.com/odoomates/odoo2xl/blob/main/PRIVACY.md
