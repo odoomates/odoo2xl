@@ -1,12 +1,23 @@
 const $ = (id) => document.getElementById(id);
 const CHOICES = { ask: "Ask each time", pdf: "PDF", excel: "Excel", both: "Both" };
 
-// Runs in the page to recognise the Odoo web client.
+// Runs in the page to recognise the Odoo web client, and whether it has the report
+// registry the extension hooks into (Odoo 15+; see handler.js).
 function probeOdoo() {
     const odoo = window.odoo;
     const info = (odoo && odoo.info) || {};
+    let supported = false;
+    try {
+        supported = Boolean(
+            (odoo.loader && odoo.loader.modules && odoo.loader.modules.get("@web/core/registry"))
+            || (odoo.__DEBUG__ && odoo.__DEBUG__.services && odoo.__DEBUG__.services["@web/core/registry"]),
+        );
+    } catch {
+        // not an Odoo page, or an older web client
+    }
     return {
-        isOdoo: Boolean(odoo && (odoo.info || odoo.__WOWL_DEBUG__ || odoo.loader || odoo.define)),
+        isOdoo: Boolean((odoo && (odoo.info || odoo.__WOWL_DEBUG__ || odoo.loader || odoo.define)) || window.openerp), // openerp: Odoo 8
+        supported,
         db: info.db,
         version: info.server_version,
     };
@@ -60,12 +71,20 @@ async function init() {
     $("odoo").hidden = false;
     $("odoo-version").textContent = info.version ? `Odoo ${info.version}` : "Odoo";
     $("odoo-db").textContent = info.db || "";
+    $("unsupported-close").addEventListener("click", () => $("unsupported").close());
+    $("unsupported-mail").addEventListener("click", () => $("unsupported").close());
     const origin = new URL(tab.url).origin;
     const { origins } = await chrome.storage.local.get("origins");
     $("enabled").checked = (origins || []).includes(origin);
     $("enabled").addEventListener("change", async (event) => {
         const enabled = event.target.checked;
         $("error").hidden = true;
+        if (enabled && !info.supported) {
+            // Older web clients have no report hook to add Excel to (handler.js).
+            event.target.checked = false;
+            $("unsupported").showModal();
+            return;
+        }
         try {
             // Host without port: Firefox rejects ports in match patterns (see background.js).
             const url = new URL(origin);

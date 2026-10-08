@@ -1,4 +1,4 @@
-// Hooks into Odoo's report printing (16+): every web client checks the
+// Hooks into Odoo's report printing (15+): every web client checks the
 // "ir.actions.report handlers" registry before printing, so a handler added
 // here can offer Excel, then let Odoo continue with the PDF when wanted.
 (() => {
@@ -34,7 +34,7 @@
     }
 
     // ------------------------------------------------------------------
-    // Odoo internals, reached the same way in 16 (odoo.__DEBUG__) and 17+ (odoo.loader)
+    // Odoo internals, reached the same way in 15/16 (odoo.__DEBUG__) and 17+ (odoo.loader)
     // ------------------------------------------------------------------
 
     function odooModule(name) {
@@ -287,6 +287,9 @@
             : [item]));
     }
 
+    // Odoo 15/16: patch(obj, name, value) with this._super; 17+: patch(obj, value) with super
+    const legacyPatch = () => Boolean(window.odoo && odoo.__DEBUG__ && !odoo.loader);
+
     function patchPrintMenu() {
         const menus = odooModule("@web/search/action_menus/action_menus");
         const patchModule = odooModule("@web/core/utils/patch");
@@ -295,13 +298,12 @@
             return Boolean(ActionMenus && ActionMenus.prototype.__oreExcelPatched);
         }
         const proto = ActionMenus.prototype;
-        const legacyPatch = Boolean(window.odoo && odoo.__DEBUG__ && !odoo.loader); // Odoo 16: patch(obj, name, value) with this._super
         const loadsItems = typeof proto.loadPrintItems === "function"; // 18+: items in state; 16/17: getter
         const runExcel = (component, item) => {
             forced = { choice: "excel", at: Date.now() };
             return component.executeAction(item.action);
         };
-        if (legacyPatch) {
+        if (legacyPatch()) {
             patchModule.patch(proto, "odoo_report_excel", {
                 get printItems() {
                     return withExcelItems(this._super());
@@ -334,6 +336,35 @@
         return true;
     }
 
+    /**
+     * The older Print menu (web.ActionMenus): every view in Odoo 15, and the views
+     * Odoo 16 hasn't moved to the new one yet.
+     */
+    function patchLegacyPrintMenu() {
+        const ActionMenus = odooModule("web.ActionMenus");
+        const patchModule = odooModule("@web/core/utils/patch");
+        const proto = ActionMenus && ActionMenus.prototype;
+        if (!proto || !patchModule || !legacyPatch() || typeof proto._setPrintItems !== "function" || proto.__oreExcelPatched) {
+            return Boolean(proto && proto.__oreExcelPatched);
+        }
+        patchModule.patch(proto, "odoo_report_excel", {
+            async _setPrintItems() {
+                return withExcelItems(await this._super(...arguments));
+            },
+            _onItemSelected(ev) {
+                const item = ev && ev.detail && ev.detail.item;
+                if (item && item.oreExcel) {
+                    ev.stopPropagation();
+                    forced = { choice: "excel", at: Date.now() };
+                    return this._executeAction(item.action);
+                }
+                return this._super(...arguments);
+            },
+        });
+        proto.__oreExcelPatched = true;
+        return true;
+    }
+
     // ------------------------------------------------------------------
     // Registration, once the web client has loaded its registry
     // ------------------------------------------------------------------
@@ -349,10 +380,12 @@
             if (!handlers.contains("odoo_report_excel")) {
                 handlers.add("odoo_report_excel", handler, { sequence: 1 });
             }
-            try {
-                patchPrintMenu();
-            } catch (error) {
-                console.warn("Odoo2XL: couldn't add Excel entries to the Print menu", error);
+            for (const patchMenu of [patchPrintMenu, patchLegacyPrintMenu]) {
+                try {
+                    patchMenu();
+                } catch (error) {
+                    console.warn("Odoo2XL: couldn't add Excel entries to the Print menu", error);
+                }
             }
             toExtension({ type: "ready" });
         } else if (attempts > 300) {

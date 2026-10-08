@@ -34,4 +34,15 @@ main p { margin: 0 0 6px; }
 .remembered ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .remembered li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .remembered li span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+dialog { width: calc(100% - 32px); max-width: 308px; padding: 16px; border: 1px solid var(--border); border-radius: 10px;
+         background: var(--bg); color: var(--text); box-shadow: 0 8px 28px rgba(0,0,0,.25); }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog h2 { margin: 0 0 6px; font-size: 14px; }
+dialog p { margin: 0 0 12px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.button { font: inherit; font-size: 12px; font-weight: 600; padding: 6px 10px; border-radius: 6px; cursor: pointer; text-decoration: none;
+          color: var(--text); background: var(--surface); border: 1px solid var(--border); }
+.button.primary { color: #fff; background: var(--accent); border-color: var(--accent); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .button.primary { color: #0b1a10; } }
+:root[data-theme="dark"] .button.primary { color: #0b1a10; }
 select { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 2px 4px; }

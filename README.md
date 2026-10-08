@@ -10,7 +10,9 @@ A browser extension for **Chrome** and **Firefox** that adds an **Excel** option
 - **Excel** (.xlsx)
 - **Both**
 
-It works with the Odoo web client from version 16 onwards, and starts with accounting reports.
+It works with the Odoo web client from version 15 onwards, and starts with accounting reports.
+
+Need it for a version older than 15? Let us know at odoomates@gmail.com and we can make it work for you.
 
 ## How it works
 
@@ -72,6 +74,8 @@ Odoo 16, 17, 18, 19 and 20 (master), all 12 checks passing on each (2026-10-08):
   - Balance Sheet, Profit and Loss, Tax Report, Journals Audit
 
 Every file was opened with openpyxl to check numbers, dates and text. Some files were also rendered with LibreOffice.
+
+Odoo 15 isn't tested yet. It uses the same report hook as 16, plus a patch for its older Print menu (`web.ActionMenus`).
 
 ## Limits
 

@@ -4,7 +4,7 @@
 Odoo2XL  (working name; final name to be decided)
 
 ## Summary (manifest description, max 132 characters)
-Print Odoo reports as Excel: real numbers, dates and currency formats. Adds Excel to the Print menu. Odoo 16–20.
+Print Odoo reports as Excel: real numbers, dates and currency formats. Adds Excel to the Print menu. Odoo 15–20.
 
 ## Category
 Productivity (Workflow & Planning)
@@ -29,7 +29,9 @@ A real spreadsheet, not a picture of a PDF:
 
 Works great with accounting reports: Trial Balance, General Ledger, Partner Ledger, Aged Partner Balance, Balance Sheet, Profit and Loss, Tax Report and Journals Audit. Also sales orders, invoices, delivery slips and most other table-based reports.
 
-Works with Odoo 16, 17, 18, 19 and 20, Community and Enterprise, on Odoo Online, Odoo.sh or your own server.
+Works with Odoo 15, 16, 17, 18, 19 and 20, Community and Enterprise, on Odoo Online, Odoo.sh or your own server.
+
+Need it for a version older than 15? Let us know at odoomates@gmail.com and we can make it work for you.
 
 Private by design:
 • Turned on per Odoo site, by you, from the toolbar button.
