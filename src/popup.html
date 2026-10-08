@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Odoo2XL</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <header class="head">
+        <span class="logo" aria-hidden="true"></span>
+        <h1>Odoo2XL</h1>
+    </header>
+    <main>
+        <section id="not-odoo" hidden>
+            <p><strong>This isn't an Odoo page.</strong></p>
+            <p class="muted small">Open your Odoo database in this tab, then click the extension again.</p>
+        </section>
+        <section id="odoo" hidden>
+            <p class="small"><span class="badge" id="odoo-version">Odoo</span> <span class="muted" id="odoo-db"></span></p>
+            <label class="check">
+                <input type="checkbox" id="enabled">
+                <span>Offer Excel when printing reports on this site</span>
+            </label>
+            <p class="muted small" id="hint">When you print a PDF report, you'll be asked: PDF, Excel or both.</p>
+            <p class="error small" id="error" hidden></p>
+        </section>
+        <section class="remembered">
+            <h2>Remembered choices</h2>
+            <ul id="remembered-list"></ul>
+            <p class="muted small" id="remembered-empty">None yet. Tick “Remember for this report” when printing to skip the question.</p>
+        </section>
+    </main>
+    <script type="module" src="popup.js"></script>
+</body>
+</html>
