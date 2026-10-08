@@ -67,9 +67,15 @@ async function init() {
         const enabled = event.target.checked;
         $("error").hidden = true;
         try {
-            const pattern = { origins: [`${origin}/*`] };
-            if (enabled && !(await chrome.permissions.contains(pattern)) && !(await chrome.permissions.request(pattern))) {
-                throw new Error("The extension needs access to this Odoo site to add the Excel option.");
+            // Host without port: Firefox rejects ports in match patterns (see background.js).
+            const url = new URL(origin);
+            const pattern = { origins: [`${url.protocol}//${url.hostname}/*`] };
+            if (enabled && !(await chrome.permissions.contains(pattern))) {
+                // If this popup closes during the prompt, the background finishes enabling.
+                await chrome.runtime.sendMessage({ type: "pendingEnable", origin, tabId: tab.id });
+                if (!(await chrome.permissions.request(pattern))) {
+                    throw new Error("The extension needs access to this Odoo site to add the Excel option.");
+                }
             }
             const result = await chrome.runtime.sendMessage({ type: "setEnabled", origin, enabled, tabId: tab.id });
             if (result && result.error) {

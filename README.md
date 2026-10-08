@@ -31,13 +31,35 @@ Nothing is sent anywhere except your own Odoo. Nothing is installed on the serve
 
 ## Install (development)
 
+**Chrome / Edge**
+
 1. Open `chrome://extensions` and turn on **Developer mode**.
 2. Click **Load unpacked** and choose this folder.
-3. Open your Odoo database, click the extension icon, and tick **Offer Excel when printing reports on this site**.
+
+**Firefox (128 or newer)**
+
+1. Run `python3 build.py firefox`.
+2. Open `about:debugging#/runtime/this-firefox` → **Load Temporary Add-on…** and pick `dist/odoo2xl-<version>-firefox.zip`.
+
+Then open your Odoo database, click the extension icon, and tick **Offer Excel when printing reports on this site**. Allow access to the site when the browser asks.
+
+## Build the store packages
+
+`python3 build.py` writes, from the same code:
+- `dist/odoo2xl-<version>-chrome.zip` for the Chrome Web Store;
+- `dist/odoo2xl-<version>-firefox.zip` for Firefox Add-ons.
+
+The Firefox package swaps the Chrome-only parts of `manifest.json`: background script instead of service worker, add-on ID `odoo2xl@odoomates`, minimum Firefox 128, and the declaration that no data is collected.
 
 Tick **Remember for this report** in the print dialog to skip the question next time. Change or clear remembered choices in the popup.
 
 ## Tested
+
+Firefox 155 (on Odoo 19): install, enabling a site through the permission flow, a Trial Balance from the PDF / Excel / Both dialog and a sales order from the Print menu "(Excel)" entry.
+
+Site access is requested for the host without its port (e.g. `http://erp.example.com/*`), because Firefox doesn't accept ports in site patterns.
+
+Chrome:
 
 Odoo 16, 17, 18, 19 and 20 (master), all 12 checks passing on each (2026-10-08):
 

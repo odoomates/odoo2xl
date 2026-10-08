@@ -1,4 +1,4 @@
-# Chrome Web Store listing: Odoo2XL 1.0.0
+# Store listings: Odoo2XL
 
 ## Name
 Odoo2XL  (working name; final name to be decided)
@@ -67,3 +67,17 @@ Lets users download Odoo's printable reports as Excel spreadsheets, from Odoo's 
 
 ## Privacy policy URL
 https://github.com/odoomates/odoo2xl/blob/main/PRIVACY.md
+
+---
+
+# Firefox Add-ons (addons.mozilla.org)
+
+- Package: `dist/odoo2xl-<version>-firefox.zip` (`python3 build.py firefox`).
+- Source code question: **No**. The code is plain JavaScript, not minified or bundled.
+- Name, summary and description: the same as above.
+- Categories: **Download Management** and **Other**.
+- Support email: odoomates@gmail.com. Homepage: https://github.com/odoomates/odoo2xl
+- License: **MIT License**.
+- Privacy policy: paste the text of PRIVACY.md (AMO takes the text itself), or link https://github.com/odoomates/odoo2xl/blob/main/PRIVACY.md
+- Screenshots: the same four images in `store/`.
+- Data collection: declared in the manifest as none (`data_collection_permissions: none`).
