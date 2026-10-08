@@ -2,7 +2,7 @@
 
 [Privacy policy](PRIVACY.md) · [MIT License](LICENSE)
 
-A Chrome extension that adds an **Excel** option when printing Odoo reports. There are two ways to use it:
+A browser extension for **Chrome** and **Firefox** that adds an **Excel** option when printing Odoo reports. There are two ways to use it:
 
 - **Odoo's Print menu** gets an "… (Excel)" entry after every PDF report (e.g. "Invoice PDF (Excel)", "Delivery Slip (Excel)"). It prints straight to Excel.
 - **Any other Print button** (e.g. an accounting report wizard) asks:
@@ -59,7 +59,7 @@ Firefox 155 (on Odoo 19): install, enabling a site through the permission flow, 
 
 Site access is requested for the host without its port (e.g. `http://erp.example.com/*`), because Firefox doesn't accept ports in site patterns.
 
-Chrome:
+Chrome (and Chromium-based browsers like Edge):
 
 Odoo 16, 17, 18, 19 and 20 (master), all 12 checks passing on each (2026-10-08):
 
