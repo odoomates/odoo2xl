@@ -35,9 +35,7 @@ A REAL SPREADSHEET, NOT A PICTURE OF A PDF
 • Printing the spreadsheet fits all columns on the page.
 
 REPORTS IT WORKS WITH
-• Accounting: Trial Balance, General Ledger, Partner Ledger, Aged Partner Balance, Balance Sheet, Profit and Loss, Tax Report, Journals Audit.
-• Invoices, sales orders and delivery slips, from the Print menu.
-• Most other table-based reports.
+It works with the accounting reports you print from Odoo's report dialogs, with invoices, sales orders and delivery slips from the Print menu, and with most other reports laid out as tables.
 
 WHO IT'S FOR
 Accountants, bookkeepers, auditors and managers who need Odoo figures in Excel to check, reconcile, share or analyse them.
