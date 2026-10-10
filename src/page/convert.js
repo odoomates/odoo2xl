@@ -8,10 +8,30 @@
         "ADDRESS", "BLOCKQUOTE", "HEADER", "FOOTER", "MAIN", "TABLE", "TR", "DL", "DT", "DD", "FORM"]);
     // Columns whose values are identifiers, never amounts (keep "101000" or "00123" as typed).
     const TEXT_COLUMN = /\b(code|ref|reference|number|no\.?|#|account|phone|mobile|vat|tax id|zip|iban|barcode|lot|serial|sku)\b/i;
+    // A "%" in the column header ("Disc.%") means its plain numbers are percentages: 10.00 is 10 %.
+    const PERCENT_COLUMN = /%/;
+    // Smallest to widest, then print: the last one present wins.
+    const BREAKPOINTS = ["", "sm-", "md-", "lg-", "xl-", "xxl-", "print-"];
+
+    /**
+     * Hidden on a wide page, as the PDF is laid out. The HTML report marks cells for phones too:
+     * "d-none d-md-table-cell" shows on wide pages, "d-md-none d-table-cell" only on phones.
+     */
+    function hiddenWhenWide(el) {
+        let display = null;
+        for (const bp of BREAKPOINTS) {
+            for (const name of el.classList) {
+                if (name.startsWith(`d-${bp}`) && !BREAKPOINTS.some((other) => other && other !== bp && name.startsWith(`d-${other}`))) {
+                    display = name.slice(2 + bp.length);
+                }
+            }
+        }
+        return display === "none";
+    }
 
     function isHidden(el) {
         const style = (el.getAttribute("style") || "").toLowerCase();
-        return el.classList.contains("d-none") || el.classList.contains("o_hidden")
+        return hiddenWhenWide(el) || el.classList.contains("o_hidden")
             || /display\s*:\s*none/.test(style) || /visibility\s*:\s*hidden/.test(style)
             || el.tagName === "SCRIPT" || el.tagName === "STYLE" || el.tagName === "IMG" || el.tagName === "svg";
     }
@@ -272,15 +292,16 @@
         if (!text) {
             return bold || indent ? { v: "", bold, indent } : null;
         }
-        const textColumn = columnHeader && TEXT_COLUMN.test(columnHeader);
+        const header = (columnHeader || "").trim();
+        const percent = text.match(/^(.*?)\s*%$/);
+        const textColumn = header && TEXT_COLUMN.test(header);
         if (!textColumn && !text.includes("\n")) {
-            const percent = text.match(/^(.*?)\s*%$/);
             const parsed = parseNumber(percent ? percent[1] : text, loc);
             if (parsed && !(parsed.integer && /^0\d/.test(parsed.text))) {
-                if (percent) {
-                    return { v: parsed.value / 100, type: "n", numFmt: `${numberFormat(parsed.decimals, false)}%`, bold, indent };
+                if (percent || PERCENT_COLUMN.test(header)) {
+                    return { v: parsed.value / 100, type: "n", numFmt: `${numberFormat(parsed.decimals, false)}%`, bold, indent, percentText: text };
                 }
-                return { v: parsed.value, type: "n", numFmt: parsed.decimals || parsed.value >= 1000 ? numberFormat(parsed.decimals) : "", bold, indent };
+                return { v: parsed.value, type: "n", numFmt: parsed.decimals || parsed.value >= 1000 ? numberFormat(parsed.decimals) : "", bold, indent, plainText: text };
             }
             const date = parseDate(text, loc);
             if (date !== null) {
@@ -392,6 +413,17 @@
             let headerRow = null;
             let width = 0;
             const rows = [...table.rows].filter((tr) => !isHidden(tr));
+            // Section and note lines span colspan="99"; keep them within the table's own columns.
+            const spanOf = (td) => Math.max(1, parseInt(td.getAttribute("colspan") || "1", 10) || 1);
+            const columns = Math.max(1, ...rows.map((tr) => [...tr.cells].filter((td) => !isHidden(td))
+                .reduce((sum, td) => sum + (spanOf(td) > 20 ? 1 : spanOf(td)), 0)));
+            // The totals under an order or invoice ("Untaxed Amount", "Tax 15%", "Total") go under its
+            // Amount column, so they line up with the amounts they add up.
+            const lines = this.lastLines;
+            const totals = columns === 2 && lines && lines.amountLast && lines.width > 2
+                && !table.querySelector("thead, th")
+                && rows.every((tr) => !textOf(tr) || (tr.cells.length && tr.cells[tr.cells.length - 1].querySelector(".oe_currency_value")));
+            const offset = totals ? lines.width - 2 : 0;
             rows.forEach((tr, i) => {
                 const r = top + i;
                 const sheetRow = [];
@@ -399,7 +431,7 @@
                 const isHead = section === "THEAD" || (i === 0 && [...tr.cells].every((c) => c.tagName === "TH"));
                 const isFoot = section === "TFOOT";
                 const rowBold = isBold(tr) || isFoot;
-                let c = 0;
+                let c = offset;
                 for (const td of tr.cells) {
                     if (isHidden(td)) {
                         continue;
@@ -407,7 +439,7 @@
                     while (occupied.has(`${r}:${c}`)) {
                         c += 1;
                     }
-                    const colspan = Math.max(1, parseInt(td.getAttribute("colspan") || "1", 10) || 1);
+                    const colspan = Math.max(1, Math.min(spanOf(td), offset + columns - c));
                     const rowspan = Math.max(1, parseInt(td.getAttribute("rowspan") || "1", 10) || 1);
                     const cell = isHead ? { v: textOf(td), type: "s", header: true, wrap: textOf(td).includes("\n") } : cellValue(td, this.loc, headers[c]);
                     if (cell) {
@@ -440,11 +472,35 @@
                 }
                 this.rows.push(sheetRow);
             });
+            if (headerRow !== null) {
+                const last = this.rows.slice(headerRow + 1).map((row) => row[width - 1]);
+                this.lastLines = { width, amountLast: last.some((cell) => cell && cell.type === "n" && /;-/.test(cell.numFmt || "")) };
+            }
             if (rows.length) {
                 this.tables.push({ r1: headerRow !== null ? headerRow : top, r2: top + rows.length - 1, c1: 0, c2: Math.max(width - 1, 0), headerRow, size: rows.length, headers: headers.slice(0, width) });
             }
-            // Start each column's indentation at 0 (templates often indent every line one level).
             const firstData = headerRow !== null ? headerRow + 1 : top;
+            const grouped = Boolean((this.loc.thousandsSep || "").trim());
+            for (let c = 0; c < width; c++) {
+                const cells = this.rows.slice(firstData).map((row) => row[c]).filter((cell) => cell && cell.v !== "" && !cell.header);
+                const asText = (cell, text) => Object.assign(cell, { v: text, type: "s", numFmt: undefined });
+                // A column mixing percentages with text holds names, not rates ("15%" next to "15%, 0% Exports"
+                // or "VAT 5% Exempt"): keep the percentages as written.
+                if (cells.some((cell) => cell.type === "s" && !cell.bold)) {
+                    cells.filter((cell) => cell.percentText !== undefined).forEach((cell) => asText(cell, cell.percentText));
+                }
+                // Odoo writes amounts and quantities from 1,000 up with a thousands separator; a column with
+                // "101000" or "40100" holds codes, so its whole numbers stay as written.
+                const plain = cells.filter((cell) => cell.plainText !== undefined && /^\d+$/.test(cell.plainText));
+                if (grouped && plain.some((cell) => cell.v >= 1000)) {
+                    plain.forEach((cell) => asText(cell, cell.plainText));
+                }
+                cells.forEach((cell) => {
+                    delete cell.percentText;
+                    delete cell.plainText;
+                });
+            }
+            // Start each column's indentation at 0 (templates often indent every line one level).
             for (let c = 0; c < width; c++) {
                 const cells = this.rows.slice(firstData).map((row) => row[c]).filter((cell) => cell && cell.v !== "" && !cell.header);
                 const base = cells.length ? Math.min(...cells.map((cell) => cell.indent || 0)) : 0;
@@ -511,22 +567,54 @@
 
     /**
      * Several documents printed together (e.g. 20 invoices): one sheet with every line
-     * and a Document column, when their main tables have the same columns.
+     * and a Document column. Columns are matched by name, since a document only shows
+     * some columns when it needs them (Taxes, Disc.%).
      */
     function allLinesSheet(sheets) {
         const mains = sheets.map((sheet) => sheet.main);
         if (sheets.length < 2 || mains.some((m) => !m || !m.rows.length)) {
             return null;
         }
-        const signature = (m) => m.headers.map((h) => (h || "").toLowerCase()).join("|");
-        if (mains.some((m) => signature(m) !== signature(mains[0]))) {
+        // Column keys: the header name, numbered when a name repeats ("Tax" for the base, "Tax" for the amount).
+        const keysOf = (headers) => {
+            const seen = {};
+            return headers.map((h) => {
+                const name = (h || "").trim().toLowerCase();
+                seen[name] = (seen[name] || 0) + 1;
+                return `${name}#${seen[name]}`;
+            });
+        };
+        const keys = mains.map((m) => keysOf(m.headers));
+        // The same kind of document: the same first column ("Description", "Product").
+        if (keys.some((k) => k[0] !== keys[0][0])) {
             return null;
         }
-        const header = [{ v: "Document", type: "s", header: true }, ...mains[0].headers.map((h) => ({ v: h || "", type: "s", header: true }))];
+        const columns = []; // {key, name}
+        mains.forEach((m, i) => {
+            keys[i].forEach((k, c) => {
+                if (!columns.some((col) => col.key === k)) {
+                    // A column only some documents have goes after the one it follows, so Unit Price stays before Amount.
+                    const previous = c ? columns.findIndex((col) => col.key === keys[i][c - 1]) : -1;
+                    columns.splice(previous + 1, 0, { key: k, name: m.headers[c] || "" });
+                }
+            });
+        });
+        const header = [{ v: "Document", type: "s", header: true }, ...columns.map((col) => ({ v: col.name, type: "s", header: true }))];
         const rows = [header];
-        sheets.forEach((sheet) => {
+        sheets.forEach((sheet, i) => {
+            const where = keys[i].map((k) => columns.findIndex((col) => col.key === k));
             for (const row of sheet.main.rows) {
-                rows.push([{ v: sheet.name, type: "s" }, ...Array.from({ length: mains[0].headers.length }, (_, c) => (row[c] ? { ...row[c], indent: 0 } : null))]);
+                // Section headings with their subtotals are bold: summing them with the lines would count twice.
+                if (row.filter((cell) => cell && cell.v !== "").every((cell) => cell.bold)) {
+                    continue;
+                }
+                const out = [{ v: sheet.name, type: "s" }, ...columns.map(() => null)];
+                row.forEach((cell, c) => {
+                    if (cell && where[c] >= 0) {
+                        out[where[c] + 1] = { ...cell, indent: 0 };
+                    }
+                });
+                rows.push(out);
             }
         });
         const widths = header.map((_, c) => Math.min(60, Math.max(10, ...rows.map((row) => {

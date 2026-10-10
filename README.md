@@ -18,15 +18,17 @@ Need it for a version older than 15? Let us know at odoomates@gmail.com and we c
 
 Odoo builds every PDF report from an HTML page. The extension asks Odoo for that HTML version of the same report: same records, same wizard options, same language and access rights. It then turns the HTML into a spreadsheet in the browser:
 
-- **Tables** become rows and columns. Header rows are bold and shaded, merged cells stay merged, and totals stay bold.
+- **Tables** become rows and columns. Header rows are bold and shaded, merged cells stay merged, and totals stay bold. Columns Odoo hides only on phones are kept, as in the PDF.
 - **Amounts** become real numbers with the currency's format (e.g. `"$" #,##0.00`, 3 decimals for KWD). They're read using the user's decimal and thousands separators. Negatives keep their sign and symbol.
-- **Dates** become real dates. Codes and references ("101000", "INV/2026/0001") stay text.
+- **Dates** become real dates. Codes and references ("101000", "INV/2026/0001") stay text: a column with a whole number from 1000 up written without a thousands separator holds codes, in any language.
+- **Percentages** become real percentages, also plain numbers under a header with "%" ("Disc.%"). A column that mixes percentages with text (tax names like "15%" and "15%, 0% Exports") keeps them as written.
+- **Order and invoice totals** (Untaxed Amount, taxes, Total, Amount Due) line up under the Amount column of the lines above them.
 - **Account levels** become Excel indentation. Odoo's templates indent with hidden white dots; the extension drops those.
 - **Filters** like "Date from", "Target Moves" and "Journals" go above the table as label/value cells.
 - **Quantities with a unit** ("10.00 Units") become numbers shown with the unit. **Dates and date-times** become real Excel dates.
 - **Addresses, the document title and info blocks** ("Invoice Date", "Salesperson") go above the lines table.
 - **Easy to work with:** the main table gets a frozen header row and a filter. Each printed record or journal gets its own sheet. Printing fits all columns to the page width.
-- **Several documents at once** (e.g. 20 invoices selected in a list) also get an **All lines** sheet: every line of every document, with a Document column, ready for filtering and pivot tables.
+- **Several documents at once** (e.g. 20 invoices selected in a list) also get an **All lines** sheet: every line of every document, with a Document column, ready for filtering and pivot tables. Columns are matched by name, so documents showing different columns (Taxes, Disc.%) still combine. Bold section and total rows are left out so sums aren't counted twice.
 - **File names** follow the record: `S00033.xlsx`, `WH-OUT-00006.xlsx`, or `Invoice PDF - INV-2026-00008 to INV-2026-00012 (5).xlsx` for several. Wizard reports use the report title and date: `Trial Balance 2026-10-08.xlsx`.
 
 Nothing is sent anywhere except your own Odoo. Nothing is installed on the server.
@@ -78,6 +80,8 @@ Odoo 16, 17, 18, 19 and 20 (master), all 12 checks passing on each (2026-10-08):
   - Balance Sheet, Profit and Loss, Tax Report, Journals Audit
 
 Every file was opened with openpyxl to check numbers, dates and text. Some files were also rendered with LibreOffice.
+
+1.0.4 converter changes, on Odoo 19.5 (2026-10-10): 15 saved reports (sales orders and invoices with sections, notes, discounts, several taxes and a part payment; vendor bill; purchase order; RFQ; delivery slips; several invoices and orders at once; Partner Ledger, Tax Report, Journals Audit) converted in headless Chrome 149 and Firefox 155, with identical output in both. Generated files opened with openpyxl.
 
 Odoo 15 isn't tested yet. It uses the same report hook as 16, plus a patch for its older Print menu (`web.ActionMenus`).
 
