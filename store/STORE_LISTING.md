@@ -35,7 +35,7 @@ A REAL SPREADSHEET, NOT A PICTURE OF A PDF
 • Printing the spreadsheet fits all columns on the page.
 
 REPORTS IT WORKS WITH
-It works with the accounting reports you print from Odoo's report dialogs, with invoices, sales orders and delivery slips from the Print menu, and with most other reports laid out as tables.
+It works with reports printed from a wizard, with records such as sales orders, invoices and delivery slips from the Print menu, and with most other reports laid out as tables.
 
 WHO IT'S FOR
 Accountants, bookkeepers, auditors and managers who need Odoo figures in Excel to check, reconcile, share or analyse them.
