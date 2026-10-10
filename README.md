@@ -31,6 +31,10 @@ Odoo builds every PDF report from an HTML page. The extension asks Odoo for that
 
 Nothing is sent anywhere except your own Odoo. Nothing is installed on the server.
 
+## Install
+
+**Chrome / Edge:** [Odoo2XL on the Chrome Web Store](https://chromewebstore.google.com/detail/odoo2xl/oninefhjgmfggdjfjlkocmfhbgefbeil)
+
 ## Install (development)
 
 **Chrome / Edge**

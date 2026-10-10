@@ -1,7 +1,7 @@
 # Store listings: Odoo2XL
 
 ## Name
-Odoo2XL  (working name; final name to be decided)
+Odoo2XL - Odoo Excel Reports
 
 ## Summary (manifest description, max 132 characters)
 Print Odoo reports as Excel: real numbers, dates and currency formats. Adds Excel to the Print menu. Odoo 15–20.
@@ -13,32 +13,49 @@ Productivity (Workflow & Planning)
 English
 
 ## Description
-Turn any Odoo PDF report into a real Excel spreadsheet, straight from Odoo's Print menu.
+Get any Odoo report as a real Excel spreadsheet in one click. No more copying numbers out of PDFs, no Odoo module to install, no server changes.
 
-Every PDF report in Odoo's Print menu gets an "(Excel)" twin: "Invoices (Excel)", "Quotation / Order (Excel)", "Delivery Slip (Excel)" and so on. One click downloads an .xlsx file. Report wizards, such as accounting reports, ask once: PDF, Excel or both, with "Remember for this report" to skip the question next time.
+Every PDF report in Odoo's Print menu gets an "(Excel)" twin: "Invoices (Excel)", "Quotation / Order (Excel)", "Delivery Slip (Excel)" and so on. Report wizards, such as the Trial Balance or General Ledger, ask: PDF, Excel or both.
 
-A real spreadsheet, not a picture of a PDF:
-• Amounts are numbers you can sum and filter, in the currency's format (2 or 3 decimals, e.g. USD or KWD).
-• Dates are real dates. Account codes and references stay as text.
+GET STARTED IN 3 STEPS
+1. Install the extension and pin it to your toolbar (puzzle-piece icon → pin).
+2. Open your Odoo database, click the Odoo2XL icon and tick "Offer Excel when printing reports on this site".
+3. Click Allow when the browser asks for access to your Odoo site. Print any report: the Excel option is there.
+
+The extension stays off until you turn it on for a site, so nothing changes on other websites.
+
+A REAL SPREADSHEET, NOT A PICTURE OF A PDF
+• Amounts are numbers you can sum, filter and pivot, in the currency's format (2 or 3 decimals, e.g. USD or KWD).
+• Dates are real Excel dates. Account codes and references stay as text, so leading zeros are kept.
 • Quantities keep their unit ("10.00 Units") and still add up.
 • Bold totals, indented account levels, a frozen header row and filters on the main table.
 • Report filters (dates, journals, target moves) appear above the table.
 • Printing several records at once gives one sheet per document, plus an "All lines" sheet with every line and a Document column, ready for pivot tables.
-• Files are named after the record (S00033.xlsx, WH-OUT-00006.xlsx), or the report and date for wizard reports.
+• Files are named after the record (S00033.xlsx, WH-OUT-00006.xlsx), or the report and date for wizard reports (Trial Balance 2026-10-08.xlsx).
 • Printing the spreadsheet fits all columns on the page.
 
-Works great with accounting reports: Trial Balance, General Ledger, Partner Ledger, Aged Partner Balance, Balance Sheet, Profit and Loss, Tax Report and Journals Audit. Also sales orders, invoices, delivery slips and most other table-based reports.
+REPORTS IT WORKS WITH
+• Accounting: Trial Balance, General Ledger, Partner Ledger, Aged Partner Balance, Balance Sheet, Profit and Loss, Tax Report, Journals Audit.
+• Invoices, sales orders and delivery slips, from the Print menu.
+• Most other table-based reports.
 
-Works with Odoo 15, 16, 17, 18, 19 and 20, Community and Enterprise, on Odoo Online, Odoo.sh or your own server.
+WHO IT'S FOR
+Accountants, bookkeepers, auditors and managers who need Odoo figures in Excel to check, reconcile, share or analyse them.
 
-Need it for a version older than 15? Let us know at odoomates@gmail.com and we can make it work for you.
+QUESTIONS
+• Which Odoo versions? 15, 16, 17, 18, 19 and 20, Community and Enterprise, on Odoo Online, Odoo.sh or your own server.
+• Do I need to be an admin or install a module? No. It uses the report you can already print, with your own login and access rights.
+• Does it change my Odoo data? No. It only reads the report Odoo prepares for printing.
+• Can I skip the PDF/Excel question? Yes, tick "Remember for this report". You can change or clear remembered choices from the toolbar popup.
+• Older Odoo version? Email odoomates@gmail.com and we can make it work for you.
 
-Private by design:
+PRIVATE BY DESIGN
 • Turned on per Odoo site, by you, from the toolbar button.
-• Uses the report Odoo already prepares for printing, under your own login and access rights.
 • The spreadsheet is built in your browser. Nothing is sent anywhere except your own Odoo. No account, no server, no tracking.
 
 Limits: images, logos and barcodes are skipped. Reports laid out without tables come out as text rows.
+
+Questions, a report that doesn't convert well, or a feature you'd like? Open an issue at github.com/odoomates/odoo2xl/issues or email odoomates@gmail.com.
 
 This extension is not affiliated with or endorsed by Odoo S.A. Odoo is a trademark of Odoo S.A.
 

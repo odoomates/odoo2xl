@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Odoo2XL",
+  "name": "Odoo2XL - Odoo Excel Reports",
   "short_name": "Odoo2XL",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Print Odoo reports as Excel: real numbers, dates and currency formats. Adds Excel to the Print menu. Odoo 15\u201320.",
   "minimum_chrome_version": "116",
   "permissions": [
