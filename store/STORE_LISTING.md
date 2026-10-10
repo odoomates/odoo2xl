@@ -15,7 +15,7 @@ English
 ## Description
 Get any Odoo report as a real Excel spreadsheet in one click. No more copying numbers out of PDFs, no Odoo module to install, no server changes.
 
-Every PDF report in Odoo's Print menu gets an "(Excel)" twin: "Invoices (Excel)", "Quotation / Order (Excel)", "Delivery Slip (Excel)" and so on. Report wizards, such as the Trial Balance or General Ledger, ask: PDF, Excel or both.
+Every PDF report in Odoo's Print menu gets an "(Excel)" twin: "Invoices (Excel)", "Quotation / Order (Excel)", "Delivery Slip (Excel)" and so on. Reports printed from a wizard ask: PDF, Excel or both.
 
 GET STARTED IN 3 STEPS
 1. Install the extension and pin it to your toolbar (puzzle-piece icon → pin).
